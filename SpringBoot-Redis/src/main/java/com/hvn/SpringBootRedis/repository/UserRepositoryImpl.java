@@ -19,6 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean saveUser(User user) {
         try {
+            redisTemplate.opsForHash().
             redisTemplate.opsForHash().put(KEY, user.getId().toString(), user);
             return true;
         }catch (Exception e) {
@@ -35,6 +36,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User fetchUserById(Long id) {
+        System.out.println("Form DB Redis");
         return (User) redisTemplate.opsForHash().get(KEY, id.toString());
     }
 

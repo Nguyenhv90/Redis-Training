@@ -3,6 +3,9 @@ package com.hvn.SpringBootRedis.controller;
 import com.hvn.SpringBootRedis.dto.User;
 import com.hvn.SpringBootRedis.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
+    @CachePut(key = "#id", value = "User")
     public ResponseEntity<String> saveUser(@RequestBody User user) throws Exception {
         boolean result = userService.saveUser(user);
         if (result)
@@ -33,6 +37,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> fetchUserById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.fetchUserById(id));
+    }
+
+    @GetMapping("/h1/{id}")
+    @Cacheable(key = "#id", value = "User")
+    public User fetchUserById2(@PathVariable("id") Long id) {
+        return userService.fetchUserById(id);
     }
 
     @DeleteMapping("/{id}")
